@@ -42,11 +42,12 @@ const dynamicHeight = 107 * scaleFactor;
 
 const VideoPlay = ({route, navigation}) => {
   const {videoData} = route.params;
-  console.log(videoData, 'Video URL is theree.');
+  const {username} = route.params;
+  const {videos} = route.params;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [likeModal, setIsLikeModal] = useState(false);
-  const [selectVideo, setSelectVideo] = useState(videoData.video_url); // Initialize with the first video URI
+  const [selectVideo, setSelectVideo] = useState(videoData.VideoUrl); // Initialize with the first video URI
 
   const handleCommentPress = () => {
     console.log('logging........');
@@ -105,76 +106,74 @@ const VideoPlay = ({route, navigation}) => {
     year: 'numeric',
   });
 
-  console.log(formattedDate, 'formatted date in the ofifve');
-
-  const DummyData = [
-    {
-      id: 1,
-      description: 'Battery Jump Start',
-      date_created: formattedDate,
-      video_url:
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      thumbnail_url: 'https://example.com/thumbnail.jpg',
-      like_count: 100,
-      comment_count: 20,
-      viewers_count: 500,
-    },
-    {
-      id: 2,
-      description: 'Incredible drone footage',
-      date_created: formattedDate,
-      video_url:
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      thumbnail_url: 'https://example.com/thumbnail2.jpg',
-      like_count: 50,
-      comment_count: 10,
-      viewers_count: 250,
-    },
-    {
-      id: 3,
-      description: 'Battery Jump Start',
-      date_created: formattedDate,
-      video_url:
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      thumbnail_url: 'https://example.com/thumbnail.jpg',
-      like_count: 100,
-      comment_count: 20,
-      viewers_count: 500,
-    },
-    {
-      id: 4,
-      description: 'Battery Jump Start',
-      date_created: formattedDate,
-      video_url:
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
-      thumbnail_url: 'https://example.com/thumbnail.jpg',
-      like_count: 100,
-      comment_count: 20,
-      viewers_count: 500,
-    },
-    {
-      id: 5,
-      description: 'Battery Jump Start',
-      date_created: formattedDate,
-      video_url:
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
-      thumbnail_url: 'https://example.com/thumbnail.jpg',
-      like_count: 100,
-      comment_count: 20,
-      viewers_count: 500,
-    },
-    {
-      id: 6,
-      description: 'Battery Jump Start',
-      date_created: formattedDate,
-      video_url:
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
-      thumbnail_url: 'https://example.com/thumbnail.jpg',
-      like_count: 100,
-      comment_count: 20,
-      viewers_count: 500,
-    },
-  ];
+  // const DummyData = [
+  //   {
+  //     id: 1,
+  //     description: 'Battery Jump Start',
+  //     date_created: formattedDate,
+  //     video_url:
+  //       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+  //     thumbnail_url: 'https://example.com/thumbnail.jpg',
+  //     like_count: 100,
+  //     comment_count: 20,
+  //     viewers_count: 500,
+  //   },
+  //   {
+  //     id: 2,
+  //     description: 'Incredible drone footage',
+  //     date_created: formattedDate,
+  //     video_url:
+  //       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+  //     thumbnail_url: 'https://example.com/thumbnail2.jpg',
+  //     like_count: 50,
+  //     comment_count: 10,
+  //     viewers_count: 250,
+  //   },
+  //   {
+  //     id: 3,
+  //     description: 'Battery Jump Start',
+  //     date_created: formattedDate,
+  //     video_url:
+  //       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+  //     thumbnail_url: 'https://example.com/thumbnail.jpg',
+  //     like_count: 100,
+  //     comment_count: 20,
+  //     viewers_count: 500,
+  //   },
+  //   {
+  //     id: 4,
+  //     description: 'Battery Jump Start',
+  //     date_created: formattedDate,
+  //     video_url:
+  //       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
+  //     thumbnail_url: 'https://example.com/thumbnail.jpg',
+  //     like_count: 100,
+  //     comment_count: 20,
+  //     viewers_count: 500,
+  //   },
+  //   {
+  //     id: 5,
+  //     description: 'Battery Jump Start',
+  //     date_created: formattedDate,
+  //     video_url:
+  //       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
+  //     thumbnail_url: 'https://example.com/thumbnail.jpg',
+  //     like_count: 100,
+  //     comment_count: 20,
+  //     viewers_count: 500,
+  //   },
+  //   {
+  //     id: 6,
+  //     description: 'Battery Jump Start',
+  //     date_created: formattedDate,
+  //     video_url:
+  //       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
+  //     thumbnail_url: 'https://example.com/thumbnail.jpg',
+  //     like_count: 100,
+  //     comment_count: 20,
+  //     viewers_count: 500,
+  //   },
+  // ];
 
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
@@ -196,16 +195,12 @@ const VideoPlay = ({route, navigation}) => {
           marginHorizontal: 10,
           marginVertical: 10,
         }}>
-        <TouchableWithoutFeedback
-          onPress={() => setSelectVideo(item.video_url)}>
+        <TouchableWithoutFeedback onPress={() => setSelectVideo(item.VideoUrl)}>
           <View style={[styles.itemContainer]}>
-            <Image source={images.thumbnail} style={styles.image} />
+            <Image source={{uri: item.TumbNailImage}} style={styles.image} />
             <View style={styles.textContainer}>
-              <Text style={styles.description}>{item.description}</Text>
-              <Text style={styles.content}>
-                The goal is to help viewers understand what the content is about
-                future.
-              </Text>
+              <Text style={styles.description}>{item.Title}</Text>
+              <Text style={styles.content}>{item.Description}</Text>
               {/* <Text style={styles.date}>{item.date_created}</Text> */}
             </View>
           </View>
@@ -270,17 +265,21 @@ const VideoPlay = ({route, navigation}) => {
           />
           <View style={styles.userProfile}>
             <Text style={styles.wrapperText}>Welcome</Text>
-            <Text style={styles.wrapperTextforUser}>Ajay</Text>
+            <Text style={styles.wrapperTextforUser}>{username}</Text>
           </View>
-          <View style={styles.notificationContainer}>
-            <Notification
+          {/* <View style={styles.notificationContainer}> */}
+          {/* <Notification
               //  source={images.notification}
               width={30}
               height={29}
               style={{marginRight: '5%'}}
             />
-            <Account width={30} height={29} />
-          </View>
+            <Account
+              width={30}
+              height={29}
+              onPress={() => navigation.navigate('Account')}
+            /> */}
+          {/* //</View> */}
         </View>
       )}
 
@@ -297,7 +296,6 @@ const VideoPlay = ({route, navigation}) => {
           }}
           ref={ref}
           onProgress={x => {
-            console.log(x);
             setProgress(x);
           }}
           // Can be a URL or a local file.
@@ -658,7 +656,7 @@ const VideoPlay = ({route, navigation}) => {
       <Text style={styles.wrapperPendingVideosText}>Next Videos</Text>
       <FlatList
         style={{marginTop: 20}}
-        data={DummyData}
+        data={videos}
         showsVerticalScrollIndicator={false}
         keyExtractor={item => item.id}
         renderItem={renderItem}
@@ -696,7 +694,7 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     marginVertical: 4,
     paddingHorizontal: 12,
     backgroundColor: 'white',
@@ -707,7 +705,8 @@ const styles = StyleSheet.create({
   userProfile: {
     flexDirection: 'column',
     marginTop: 4,
-    marginRight: '17%',
+    marginLeft: 20,
+    //marginRight: '24%',
   },
   wrapperText: {
     fontSize: 12,

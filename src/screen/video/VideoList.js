@@ -1,13 +1,16 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
   Text,
   View,
   StyleSheet,
+  ActivityIndicator,
   useWindowDimensions,
   Dimensions,
   Platform,
+  BackHandler,
+  Alert,
   StatusBar,
   TouchableOpacity,
   TouchableHighlight,
@@ -22,7 +25,10 @@ import Notification from '../../../assets/images/notification.svg';
 import Account from '../../../assets/images/account.svg';
 import Total from '../../../assets/images/total.svg';
 import Completed from '../../../assets/images/Completed.svg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Incompleted from '../../../assets/images/InCompleted.svg';
+import {apiGetWithoutToken} from '../api/Api';
+
 const {width, height} = Dimensions.get('window');
 
 // Define the base width and height
@@ -117,6 +123,78 @@ const DummyData = [
 ];
 
 const VideoList = ({navigation}) => {
+  const [username, setUsername] = useState('');
+  const [dashboardDetails, setDashboardDetails] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    getData();
+    getDashboard();
+    getVideos();
+  }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('Exit App', 'Are you sure you want to exit?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {text: 'YES', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  const getData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const userID = await AsyncStorage.getItem('userID');
+      const username = await AsyncStorage.getItem('username');
+
+      if (token !== null && userID !== null && username !== null) {
+        console.log('Token:', token);
+        console.log('UserID:', userID);
+        setUsername(username);
+      } else {
+        console.log('Token or userID is null');
+      }
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
+  };
+
+  const getDashboard = async () => {
+    const userID = await AsyncStorage.getItem('userID');
+    try {
+      const data = await apiGetWithoutToken(`getDashboard/${userID}`);
+      console.log(data, 'data is there......');
+      setDashboardDetails(data);
+    } catch (error) {
+      console.error('POST error:', error);
+    }
+  };
+
+  const getVideos = async () => {
+    const userID = await AsyncStorage.getItem('userID');
+    try {
+      const data = await apiGetWithoutToken(`getVideos/${userID}`);
+      setVideos(data);
+      setLoading(false);
+      console.log(data, 'data is there......');
+    } catch (error) {
+      console.error('POST error:', error);
+    }
+  };
+
   const renderItem = ({item}) => {
     return (
       <View
@@ -129,13 +207,10 @@ const VideoList = ({navigation}) => {
         }}>
         <TouchableWithoutFeedback onPress={() => handleVideoPress(item)}>
           <View style={[styles.itemContainer]}>
-            <Image source={images.thumbnail} style={styles.image} />
+            <Image source={{uri: item.TumbNailImage}} style={styles.image} />
             <View style={styles.textContainer}>
-              <Text style={styles.description}>{item.description}</Text>
-              <Text style={styles.content}>
-                The goal is to help viewers understand what the content is about
-                future.
-              </Text>
+              <Text style={styles.description}>{item.Title}</Text>
+              <Text style={styles.content}>{item.Description}</Text>
               {/* <Text style={styles.date}>{item.date_created}</Text> */}
             </View>
           </View>
@@ -183,7 +258,11 @@ const VideoList = ({navigation}) => {
   };
 
   const handleVideoPress = item => {
-    navigation.navigate('VideoPlay', {videoData: item});
+    navigation.navigate('VideoPlay', {
+      videoData: item,
+      username: username,
+      videos: videos,
+    });
   };
 
   return (
@@ -196,16 +275,21 @@ const VideoList = ({navigation}) => {
         />
         <View style={styles.userProfile}>
           <Text style={styles.wrapperText}>Welcome</Text>
-          <Text style={styles.wrapperTextforUser}>Ajay</Text>
+          <Text style={styles.wrapperTextforUser}>{username}</Text>
         </View>
         <View style={styles.notificationContainer}>
           <Notification
+            onPress={() => navigation.navigate('Notification')}
             width={30}
             height={29}
             //  source={images.notification}
             style={{marginRight: '8%'}}
           />
-          <Account width={30} height={29} />
+          <Account
+            width={30}
+            height={29}
+            onPress={() => navigation.navigate('Account')}
+          />
         </View>
       </View>
       <View style={styles.statusContainer}>
@@ -217,7 +301,11 @@ const VideoList = ({navigation}) => {
             />
             <Text style={styles.statusText}>Total</Text>
 
-            <Text style={styles.statusCount}>{DummyData.length}</Text>
+            <Text style={styles.statusCount}>
+              {dashboardDetails.length > 0
+                ? dashboardDetails[0]?.total_count
+                : 0}
+            </Text>
           </View>
         </View>
         <View style={styles.subContainer}>
@@ -226,9 +314,13 @@ const VideoList = ({navigation}) => {
             //  source={images.total}
             // style={{marginTop: 10, marginLeft: 6}}
             />
-            <Text style={styles.statusText}>Complete</Text>
+            <Text style={styles.statusText}>Completed</Text>
 
-            <Text style={styles.statusCountForCompleted}>26</Text>
+            <Text style={styles.statusCountForCompleted}>
+              {dashboardDetails.length > 0
+                ? dashboardDetails[0]?.completed_count
+                : 0}
+            </Text>
           </View>
         </View>
       </View>
@@ -241,7 +333,11 @@ const VideoList = ({navigation}) => {
             />
             <Text style={styles.statusText}>Unwatched</Text>
 
-            <Text style={styles.statusCountForUnwatched}>26</Text>
+            <Text style={styles.statusCountForUnwatched}>
+              {dashboardDetails.length > 0
+                ? dashboardDetails[0]?.unwatched_count
+                : 0}
+            </Text>
           </View>
         </View>
         <View style={styles.subContainer}>
@@ -252,18 +348,35 @@ const VideoList = ({navigation}) => {
             />
             <Text style={styles.statusText}>In Complete</Text>
 
-            <Text style={styles.statusCountForInCompleted}>26</Text>
+            <Text style={styles.statusCountForInCompleted}>
+              {dashboardDetails.length > 0
+                ? dashboardDetails[0]?.complete_count
+                : 0}
+            </Text>
           </View>
         </View>
       </View>
 
-      <FlatList
-        style={{marginTop: 20}}
-        data={DummyData}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
-      />
+      {loading ? (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      ) : videos.length > 0 ? (
+        <FlatList
+          style={{marginTop: 20}}
+          data={videos}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={item => item.id}
+          renderItem={renderItem}
+        />
+      ) : (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <Text
+            style={{fontSize: 26, fontFamily: 'DMSans-Bold', color: 'black'}}>
+            No videos available
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

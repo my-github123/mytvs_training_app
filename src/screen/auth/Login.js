@@ -5,13 +5,17 @@ import {
   StyleSheet,
   StatusBar,
   Image,
+  Alert,
   TouchableOpacity,
+  ToastAndroid,
   TextInput,
 } from 'react-native';
 import images from '../../components/images';
 import CustomButton from '../../components/CustomButton';
 import Logo from '../../../assets/images/logo.svg';
 import Password from '../../../assets/images/password.svg';
+import {apiPostWithoutToken} from '../api/Api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login({navigation}) {
   const [username, setUsername] = useState('');
@@ -22,9 +26,57 @@ export default function Login({navigation}) {
     setIsPasswordVisible(prev => !prev);
   };
 
-  const handlePress = () => {
-    // Handle button press logic here
-    navigation.navigate('VideoList');
+  // const handlePress = () => {
+  //   // Handle button press logic here
+
+  // };
+
+  const handlePress = async () => {
+    if (!username.trim() || !password.trim()) {
+      ToastAndroid.show(
+        'Please enter username and password',
+        ToastAndroid.SHORT,
+      );
+      return;
+    }
+
+    await handlePostWithToken();
+
+    // Your logic for handling the API call with the username and password
+  };
+
+  const handlePostWithToken = async () => {
+    console.log('handle ');
+    try {
+      const params = {
+        username: username,
+        password: password,
+      };
+      const data = await apiPostWithoutToken('login', params);
+
+      console.log(data.token, 'TOKEN IS THERE...');
+
+      console.log(data.user.userId, 'USER ID IS THERE...........');
+      await AsyncStorage.setItem('token', data.token);
+      await AsyncStorage.setItem('userID', data.user.userId);
+      await AsyncStorage.setItem('username', data.user.username);
+
+      const userString = JSON.stringify(data.user);
+
+      // Store user string in AsyncStorage
+      AsyncStorage.setItem('userList', userString)
+        .then(() => console.log('User stored successfully'))
+        .catch(error => console.error('Failed to store user:', error));
+
+      console.log('POST response:', data);
+      setUsername('');
+      setPassword('');
+      ToastAndroid.show('Login Successfully', ToastAndroid.SHORT);
+      navigation.navigate('VideoList');
+    } catch (error) {
+      ToastAndroid.show('User Not Found', ToastAndroid.SHORT);
+      console.error('POST error:', error);
+    }
   };
   return (
     <View style={styles.container}>
@@ -45,11 +97,12 @@ export default function Login({navigation}) {
             borderRadius: 8,
             borderColor: '#e8ecf4',
             borderWidth: 1,
-            paddingHorizontal: 16,
-            marginTop: 17,
-            fontSize: 15,
-            color: '#8391a1',
+            paddingHorizontal: 16, // Add padding to keep text away from borders
+            marginTop: 15,
             borderStyle: 'solid',
+            color: 'black',
+            fontSize: 15,
+            fontFamily: 'DMSans-Medium',
           }}
           value={username}
           onChangeText={text => setUsername(text)}
@@ -72,6 +125,9 @@ export default function Login({navigation}) {
             paddingHorizontal: 16, // Add padding to keep text away from borders
             marginTop: 15,
             borderStyle: 'solid',
+            color: 'black',
+            fontSize: 15,
+            fontFamily: 'DMSans-Medium',
           }}
           secureTextEntry={!isPasswordVisible}
           placeholder="Enter your password"
@@ -95,7 +151,7 @@ export default function Login({navigation}) {
           />
         </TouchableOpacity>
 
-        <Text style={styles.forgotPassword}>Forgot Password?</Text>
+        {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
 
         <CustomButton title="Login" onPress={handlePress} />
       </View>
@@ -140,7 +196,7 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: 'absolute',
-    bottom: 124,
+    bottom: 94,
     right: 30,
   },
 });
