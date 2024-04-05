@@ -144,11 +144,18 @@ export default function Login({navigation}) {
         <TouchableOpacity
           style={styles.eyeIcon}
           onPress={togglePasswordVisibility}>
+          {/* {isPasswordVisible ? ( */}
           <Password
             // source={images.eyeIcon} // Replace 'eye-icon.png' with the path to your eye icon image
             style={{width: 24, height: 24}}
             //  resizeMode="contain"
           />
+          {/* ) : ( */}
+          {/* <Image
+              source={require('../../../assets/images/eyehide.png')}
+              style={{width: 22, height: 22, tintColor: '#6a707c'}}
+            /> */}
+          {/* )} */}
         </TouchableOpacity>
 
         {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}

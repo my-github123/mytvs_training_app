@@ -68,7 +68,7 @@ export default function Account({navigation}) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={require('../../../assets/images/back.png')}
-            style={{width: 30, height: 33, marginTop: 8}}
+            style={{width: 40, height: 43, marginTop: 3}}
           />
         </TouchableOpacity>
 
@@ -83,72 +83,74 @@ export default function Account({navigation}) {
         </Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{alignItems: 'center'}}>
-          <User
-            // source={images.profile}
-            width={60}
-            height={63}
-            style={{marginTop: 20}}
-          />
-        </View>
-        <View style={styles.loginContainer}>
-          <Text style={styles.wrapperText}>Username</Text>
-          <TextInput
-            style={styles.Textinput}
-            value={profileList.username}
-            editable={false}
-            // onChangeText={text => setUsername(text)}
+        <View style={{marginVertical: 20}}>
+          <View style={{alignItems: 'center'}}>
+            <User
+              // source={images.profile}
+              width={60}
+              height={63}
+              //  style={{marginTop: 10}}
+            />
+          </View>
+          <View style={styles.loginContainer}>
+            <Text style={styles.wrapperText}>Username</Text>
+            <TextInput
+              style={styles.Textinput}
+              value={profileList.username}
+              editable={false}
+              // onChangeText={text => setUsername(text)}
 
-            // other props
-          />
-          <Text style={styles.wrapperText}>designation</Text>
-          <TextInput
-            style={styles.Textinput}
-            value={profileList.designation}
-            editable={false}
-            //  onChangeText={text => setUsername(text)}
+              // other props
+            />
+            <Text style={styles.wrapperText}>designation</Text>
+            <TextInput
+              style={styles.Textinput}
+              value={profileList.designation}
+              editable={false}
+              //  onChangeText={text => setUsername(text)}
 
-            // other props
-          />
-          <Text style={styles.wrapperText}>E code</Text>
-          <TextInput
-            style={styles.Textinput}
-            value={profileList.empId}
-            editable={false}
-            // onChangeText={text => setUsername(text)}
+              // other props
+            />
+            <Text style={styles.wrapperText}>E code</Text>
+            <TextInput
+              style={styles.Textinput}
+              value={profileList.empId}
+              editable={false}
+              // onChangeText={text => setUsername(text)}
 
-            // other props
-          />
-          <Text style={styles.wrapperText}>Phonenumber</Text>
-          <TextInput
-            style={styles.Textinput}
-            value={profileList.phoneNumber}
-            editable={false}
-            //  onChangeText={text => setUsername(text)}
+              // other props
+            />
+            <Text style={styles.wrapperText}>Phonenumber</Text>
+            <TextInput
+              style={styles.Textinput}
+              value={profileList.phoneNumber}
+              editable={false}
+              //  onChangeText={text => setUsername(text)}
 
-            // other props
-          />
-          {/* s */}
-          <Text style={styles.wrapperText}>District</Text>
-          <TextInput
-            style={styles.Textinput}
-            value={profileList.district}
-            editable={false}
-            //   onChangeText={text => setUsername(text)}
+              // other props
+            />
+            {/* s */}
+            <Text style={styles.wrapperText}>District</Text>
+            <TextInput
+              style={styles.Textinput}
+              value={profileList.district}
+              editable={false}
+              //   onChangeText={text => setUsername(text)}
 
-            // other props
-          />
-          <Text style={styles.wrapperText}>Garagename</Text>
-          <TextInput
-            style={styles.Textinput}
-            value={profileList.garageName}
-            editable={false}
-            //   onChangeText={text => setUsername(text)}
+              // other props
+            />
+            <Text style={styles.wrapperText}>Garagename</Text>
+            <TextInput
+              style={styles.Textinput}
+              value={profileList.garageName}
+              editable={false}
+              //   onChangeText={text => setUsername(text)}
 
-            // other props
-          />
+              // other props
+            />
 
-          <CustomButton title="Logout" onPress={handlePress} />
+            <CustomButton title="Logout" onPress={handlePress} />
+          </View>
         </View>
       </ScrollView>
     </View>

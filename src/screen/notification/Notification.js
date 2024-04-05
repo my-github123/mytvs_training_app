@@ -27,7 +27,7 @@ export default function Notification({navigation}) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={require('../../../assets/images/back.png')}
-            style={{width: 30, height: 33, marginTop: 8}}
+            style={{width: 40, height: 43, marginTop: 3}}
           />
         </TouchableOpacity>
 
