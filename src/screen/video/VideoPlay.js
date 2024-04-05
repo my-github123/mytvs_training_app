@@ -13,6 +13,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Heart from '../../../assets/images/heart.svg';
 import Comment from '../../../assets/images/comment.svg';
 import Close from '../../../assets/images/close.svg';
@@ -20,6 +21,7 @@ import User from '../../../assets/images/user.svg';
 import Notification from '../../../assets/images/notification.svg';
 import Account from '../../../assets/images/account.svg';
 import Slider from '@react-native-community/slider';
+import {apiPostWithoutToken} from '../api/Api';
 import Orientation from 'react-native-orientation-locker';
 
 import Video from 'react-native-video';
@@ -50,7 +52,6 @@ const VideoPlay = ({route, navigation}) => {
   const [selectVideo, setSelectVideo] = useState(videoData.VideoUrl); // Initialize with the first video URI
 
   const handleCommentPress = () => {
-    console.log('logging........');
     setIsModalVisible(true);
   };
 
@@ -87,6 +88,10 @@ const VideoPlay = ({route, navigation}) => {
 
     return () => backHandler.remove();
   }, [fullScreen]);
+
+  useEffect(() => {
+    callingApiForCount();
+  }, []);
 
   // const handleLikePress = () => {
   //   setIsLikeModal(true);
@@ -185,6 +190,23 @@ const VideoPlay = ({route, navigation}) => {
     }
   };
 
+  const callingApiForCount = async () => {
+    const userID = await AsyncStorage.getItem('userID');
+
+    try {
+      const params = {
+        userId: userID,
+        videoId: videos.videoId,
+        playPressCount: puased ? 0 : 1,
+        pauseCount: puased ? 1 : 0,
+        videoSeekBarTime: formatTime(progress?.currentTime),
+      };
+      const data = await apiPostWithoutToken('videointeraction', params);
+    } catch (error) {
+      console.log(error, 'Error is there....');
+    }
+  };
+
   const renderItem = ({item}) => {
     return (
       <View
@@ -252,6 +274,16 @@ const VideoPlay = ({route, navigation}) => {
 
   const [showIcons, setShowIcons] = useState(false);
 
+  const formatTime = timeInSeconds => {
+    const hours = Math.floor(timeInSeconds / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
+    const seconds = Math.floor(timeInSeconds % 60);
+
+    return `${hours > 0 ? `${hours}:` : ''}${
+      minutes < 10 ? '0' : ''
+    }${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -297,6 +329,10 @@ const VideoPlay = ({route, navigation}) => {
           ref={ref}
           onProgress={x => {
             setProgress(x);
+            console.log(
+              formatTime(x.currentTime),
+              'current seek iiiiiiiiiiiiii',
+            );
           }}
           // Can be a URL or a local file.
           //  ref={(ref) => {
@@ -333,6 +369,7 @@ const VideoPlay = ({route, navigation}) => {
               <TouchableOpacity
                 onPress={() => {
                   setPaused(!puased);
+                  callingApiForCount();
                 }}>
                 <Image
                   source={

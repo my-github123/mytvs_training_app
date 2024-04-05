@@ -53,74 +53,74 @@ const formattedDate = currentDate.toLocaleDateString('en-US', {
 
 console.log(formattedDate, 'formatted date in the ofifve');
 
-const DummyData = [
-  {
-    id: 1,
-    description: 'Battery Jump Start',
-    date_created: formattedDate,
-    video_url:
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    thumbnail_url: 'https://example.com/thumbnail.jpg',
-    like_count: 100,
-    comment_count: 20,
-    viewers_count: 500,
-  },
-  {
-    id: 2,
-    description: 'Incredible drone footage',
-    date_created: formattedDate,
-    video_url:
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    thumbnail_url: 'https://example.com/thumbnail2.jpg',
-    like_count: 50,
-    comment_count: 10,
-    viewers_count: 250,
-  },
-  {
-    id: 3,
-    description: 'Battery Jump Start',
-    date_created: formattedDate,
-    video_url:
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    thumbnail_url: 'https://example.com/thumbnail.jpg',
-    like_count: 100,
-    comment_count: 20,
-    viewers_count: 500,
-  },
-  {
-    id: 4,
-    description: 'Battery Jump Start',
-    date_created: formattedDate,
-    video_url:
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    thumbnail_url: 'https://example.com/thumbnail.jpg',
-    like_count: 100,
-    comment_count: 20,
-    viewers_count: 500,
-  },
-  {
-    id: 5,
-    description: 'Battery Jump Start',
-    date_created: formattedDate,
-    video_url:
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    thumbnail_url: 'https://example.com/thumbnail.jpg',
-    like_count: 100,
-    comment_count: 20,
-    viewers_count: 500,
-  },
-  {
-    id: 6,
-    description: 'Battery Jump Start',
-    date_created: formattedDate,
-    video_url:
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    thumbnail_url: 'https://example.com/thumbnail.jpg',
-    like_count: 100,
-    comment_count: 20,
-    viewers_count: 500,
-  },
-];
+// const DummyData = [
+//   {
+//     id: 1,
+//     description: 'Battery Jump Start',
+//     date_created: formattedDate,
+//     video_url:
+//       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+//     thumbnail_url: 'https://example.com/thumbnail.jpg',
+//     like_count: 100,
+//     comment_count: 20,
+//     viewers_count: 500,
+//   },
+//   {
+//     id: 2,
+//     description: 'Incredible drone footage',
+//     date_created: formattedDate,
+//     video_url:
+//       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+//     thumbnail_url: 'https://example.com/thumbnail2.jpg',
+//     like_count: 50,
+//     comment_count: 10,
+//     viewers_count: 250,
+//   },
+//   {
+//     id: 3,
+//     description: 'Battery Jump Start',
+//     date_created: formattedDate,
+//     video_url:
+//       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+//     thumbnail_url: 'https://example.com/thumbnail.jpg',
+//     like_count: 100,
+//     comment_count: 20,
+//     viewers_count: 500,
+//   },
+//   {
+//     id: 4,
+//     description: 'Battery Jump Start',
+//     date_created: formattedDate,
+//     video_url:
+//       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+//     thumbnail_url: 'https://example.com/thumbnail.jpg',
+//     like_count: 100,
+//     comment_count: 20,
+//     viewers_count: 500,
+//   },
+//   {
+//     id: 5,
+//     description: 'Battery Jump Start',
+//     date_created: formattedDate,
+//     video_url:
+//       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+//     thumbnail_url: 'https://example.com/thumbnail.jpg',
+//     like_count: 100,
+//     comment_count: 20,
+//     viewers_count: 500,
+//   },
+//   {
+//     id: 6,
+//     description: 'Battery Jump Start',
+//     date_created: formattedDate,
+//     video_url:
+//       'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+//     thumbnail_url: 'https://example.com/thumbnail.jpg',
+//     like_count: 100,
+//     comment_count: 20,
+//     viewers_count: 500,
+//   },
+// ];
 
 const VideoList = ({navigation}) => {
   const [username, setUsername] = useState('');
