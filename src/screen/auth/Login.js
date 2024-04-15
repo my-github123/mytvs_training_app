@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -17,14 +17,42 @@ import Password from '../../../assets/images/password.svg';
 import {apiPostWithoutToken} from '../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Call the function to store the data
+
 export default function Login({navigation}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  // const userDatas = {
+  //   appVersion: '',
+  //   createdAt: '2024-04-04T11:11:58.000Z',
+  //   designation: 'Manager',
+  //   district: 'chennai',
+  //   empId: 'K09655',
+  //   garageId: 'MHM550',
+  //   garageName: 'TVS A.A OWN PATROL - AMBATTUR',
+  //   loginStatus: '0',
+  //   manufacturer: '',
+  //   model: '',
+  //   networkType: '',
+  //   password: 'Today@',
+  //   phoneNumber: '9080269267',
+  //   sdkVersion: '',
+  //   state: 'Tamilnadu',
+  //   updatedAt: '2024-04-04T11:11:58.000Z',
+  //   userId: '1',
+  //   username: username,
+  //   versionCode: 1,
+  // };
+
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(prev => !prev);
   };
+
+  // useEffect(() => {
+  //   storeUserData(userDatas);
+  // }, []);
 
   // const handlePress = () => {
   //   // Handle button press logic here
@@ -45,6 +73,52 @@ export default function Login({navigation}) {
     // Your logic for handling the API call with the username and password
   };
 
+  // const storeUserData = async userData => {
+  //   try {
+  //     await AsyncStorage.setItem('userList', JSON.stringify(userData));
+  //     console.log('Data stored successfully');
+  //   } catch (error) {
+  //     console.error('Failed to store data:', error);
+  //   }
+  // };
+
+  // const handlePress = async () => {
+  //   if (!username.trim() || !password.trim()) {
+  //     ToastAndroid.show(
+  //       'Please enter username and password',
+  //       ToastAndroid.SHORT,
+  //     );
+  //     return;
+  //   }
+
+  //   try {
+  //     // Retrieve the stored data from AsyncStorage
+  //     const storedData = await AsyncStorage.getItem('userData');
+
+  //     console.log(storedData, 'stored data');
+  //     if (storedData) {
+  //       const userData = JSON.parse(storedData);
+  //       // Check if the entered username and password match any of the stored credentials
+  //       const user = userData.find(
+  //         item => item.username === username || item.password === password,
+  //       );
+  //       console.log(user, 'user is there..........');
+  //       if (user) {
+  //         // Logic for navigating to the videoList page
+  //         // For example, navigate('videoList');
+  //         await AsyncStorage.setItem('username', username);
+  //         setUsername('');
+  //         setPassword('');
+  //         navigation.navigate('VideoList');
+  //       } else {
+  //         ToastAndroid.show('Invalid username or password', ToastAndroid.SHORT);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to retrieve data from AsyncStorage:', error);
+  //   }
+  // };
+
   const handlePostWithToken = async () => {
     console.log('handle ');
     try {
@@ -54,16 +128,14 @@ export default function Login({navigation}) {
       };
       const data = await apiPostWithoutToken('login', params);
 
-      console.log(data.token, 'TOKEN IS THERE...');
-
-      console.log(data.user.userId, 'USER ID IS THERE...........');
       await AsyncStorage.setItem('token', data.token);
-      await AsyncStorage.setItem('userID', data.user.userId);
+      await AsyncStorage.setItem('userID', JSON.stringify(data.user.userId));
+
       await AsyncStorage.setItem('username', data.user.username);
 
       const userString = JSON.stringify(data.user);
 
-      // Store user string in AsyncStorage
+      //Store user string in AsyncStorage
       AsyncStorage.setItem('userList', userString)
         .then(() => console.log('User stored successfully'))
         .catch(error => console.error('Failed to store user:', error));

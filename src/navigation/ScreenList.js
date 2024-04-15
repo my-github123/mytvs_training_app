@@ -35,17 +35,11 @@ export default function ScreenList() {
         screenOptions={{
           headerShown: false,
         }}>
-        {token ? (
-          <>
-            <Stack.Screen name="VideoList" component={VideoList} />
-            <Stack.Screen name="VideoPlay" component={VideoPlay} />
-            <Stack.Screen name="Account" component={Account} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Notification" component={Notification} />
-          </>
-        ) : (
-          <Stack.Screen name="Login" component={Login} />
-        )}
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="VideoList" component={VideoList} />
+        <Stack.Screen name="VideoPlay" component={VideoPlay} />
+        <Stack.Screen name="Account" component={Account} />
+        <Stack.Screen name="Notification" component={Notification} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -21,6 +21,7 @@ export default function Notification({navigation}) {
 
     return () => backHandler.remove();
   }, [navigation]);
+
   return (
     <View style={styles.container}>
       <View style={[styles.profileContainer, {height: 55}]}>

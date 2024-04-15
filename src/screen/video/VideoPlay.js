@@ -24,6 +24,8 @@ import Slider from '@react-native-community/slider';
 import {apiPostWithoutToken} from '../api/Api';
 import Orientation from 'react-native-orientation-locker';
 
+import moment from 'moment';
+
 import Video from 'react-native-video';
 import images from '../../components/images';
 
@@ -208,6 +210,12 @@ const VideoPlay = ({route, navigation}) => {
   };
 
   const renderItem = ({item}) => {
+    const formattedDate = moment(item.Date).format('MMM D, YYYY');
+
+    const currentTime = moment();
+    const difference = moment(currentTime).diff(moment(item.Date));
+
+    const duration = moment.duration(difference);
     return (
       <View
         style={{
@@ -265,7 +273,10 @@ const VideoPlay = ({route, navigation}) => {
               justifyContent: 'flex-end',
               width: '55%',
             }}>
-            <Text style={styles.date}>{item.date_created}</Text>
+            <Text style={styles.date}>
+              {formattedDate} {duration.hours()} hours {duration.minutes()} min{' '}
+              {duration.seconds()} sec
+            </Text>
           </View>
         </View>
       </View>

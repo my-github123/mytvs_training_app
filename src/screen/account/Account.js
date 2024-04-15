@@ -23,12 +23,27 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export default function Account({navigation}) {
   const [profileList, setProfileList] = useState({});
+  const [username, setUsername] = useState('');
   useEffect(() => {
     getProfileList();
+    getData();
   }, []);
+
+  const getData = async () => {
+    try {
+      const username = await AsyncStorage.getItem('username');
+
+      if (username !== null) {
+        setUsername(username);
+      }
+    } catch (e) {
+      console.log(e, 'fyy');
+    }
+  };
 
   const getProfileList = async () => {
     await AsyncStorage.getItem('userList')
+
       .then(userString => {
         if (userString) {
           // Parse the user string into an object
@@ -61,6 +76,7 @@ export default function Account({navigation}) {
         navigation.navigate('Login'),
       )
       .catch(error => console.error('Failed to remove token:', error));
+    navigation.navigate('Login');
   };
   return (
     <View style={styles.container}>
@@ -96,7 +112,7 @@ export default function Account({navigation}) {
             <Text style={styles.wrapperText}>Username</Text>
             <TextInput
               style={styles.Textinput}
-              value={profileList.username}
+              value={username}
               editable={false}
               // onChangeText={text => setUsername(text)}
 
