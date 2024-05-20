@@ -1,8 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://10.237.95.204:3000/api/users/';
+const BASE_URL = 'https://training.mytvs.in/rsa-trg/';
+
+//const BASE_URL = 'http://10.237.95.204:8100/api/users/';
 
 export const apiGetWithToken = async endpoint => {
+  console.log(BASE_URL, endpoint, 'is thre....');
   const token = await AsyncStorage.getItem('token');
   const response = await fetch(`${BASE_URL}/${endpoint}`, {
     method: 'GET',
@@ -20,6 +23,17 @@ export const apiGetWithoutToken = async endpoint => {
     headers: {
       'Content-Type': 'application/json',
     },
+  });
+  return response.json();
+};
+
+export const apiPutWithoutToken = async (endpoint, body) => {
+  const response = await fetch(`${BASE_URL}/${endpoint}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
   });
   return response.json();
 };

@@ -5,6 +5,7 @@ import {
   Image,
   BackHandler,
   Text,
+  ActivityIndicator,
   StatusBar,
   Platform,
   Modal,
@@ -52,6 +53,7 @@ const VideoPlay = ({route, navigation}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [likeModal, setIsLikeModal] = useState(false);
   const [selectVideo, setSelectVideo] = useState(videoData.VideoUrl); // Initialize with the first video URI
+  const [videoId, setVideoId] = useState(videoData.videoId);
 
   const handleCommentPress = () => {
     setIsModalVisible(true);
@@ -61,6 +63,7 @@ const VideoPlay = ({route, navigation}) => {
   const [puased, setPaused] = useState(false);
   const [progress, setProgress] = useState(null);
   const [fullScreen, setFullScreen] = useState(false);
+
   const ref = useRef();
   const format = seconds => {
     let mins = parseInt(seconds / 60)
@@ -184,14 +187,51 @@ const VideoPlay = ({route, navigation}) => {
 
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleLikePress = () => {
-    if (!liked) {
+  const handlePostWithToken = async () => {
+    const userID = await AsyncStorage.getItem('userID');
+    const username = await AsyncStorage.getItem('username');
+
+    console.log(likeCount, 'Like count is there.');
+    console.log('handle ');
+    try {
+      const params = {
+        userId: userID,
+        username: username,
+        videoId: videoId,
+        count: likeCount,
+        isActive: liked ? true : false,
+      };
+
+      const data = await apiPostWithoutToken('like', params);
+
+      console.log(data, 'data is there.');
+
+      //   navigation.navigate('VideoList');
+    } catch (error) {
+      //  ToastAndroid.show('User Not Found', ToastAndroid.SHORT);
+      console.error('POST error:', error);
+    }
+  };
+  const handleLikePress = async () => {
+    if (liked) {
       setLikeCount(likeCount + 1);
-      setLiked(true);
+      setLiked(!liked);
+      await handlePostWithToken();
+    } else {
+      setLikeCount(likeCount);
+      setLiked(!liked);
+      await handlePostWithToken();
     }
   };
 
+  console.log(liked, 'Liked is there.........');
+
+  const videoControl = () => {
+    console.log('rahim');
+    setClicked(!clicked);
+  };
   const callingApiForCount = async () => {
     const userID = await AsyncStorage.getItem('userID');
 
@@ -209,6 +249,10 @@ const VideoPlay = ({route, navigation}) => {
     }
   };
 
+  const runVideo = item => {
+    setSelectVideo(item.VideoUrl);
+    setVideoId(item.videoId);
+  };
   const renderItem = ({item}) => {
     const formattedDate = moment(item.Date).format('MMM D, YYYY');
 
@@ -225,7 +269,7 @@ const VideoPlay = ({route, navigation}) => {
           marginHorizontal: 10,
           marginVertical: 10,
         }}>
-        <TouchableWithoutFeedback onPress={() => setSelectVideo(item.VideoUrl)}>
+        <TouchableWithoutFeedback onPress={() => runVideo(item)}>
           <View style={[styles.itemContainer]}>
             <Image source={{uri: item.TumbNailImage}} style={styles.image} />
             <View style={styles.textContainer}>
@@ -273,10 +317,10 @@ const VideoPlay = ({route, navigation}) => {
               justifyContent: 'flex-end',
               width: '55%',
             }}>
-            <Text style={styles.date}>
+            {/* <Text style={styles.date}>
               {formattedDate} {duration.hours()} hours {duration.minutes()} min{' '}
               {duration.seconds()} sec
-            </Text>
+            </Text> */}
           </View>
         </View>
       </View>
@@ -327,36 +371,42 @@ const VideoPlay = ({route, navigation}) => {
       )}
 
       <TouchableOpacity
-        style={{width: '100%', height: fullScreen ? '100%' : 200}}
-        onPress={() => {
-          setClicked(true);
-          setShowIcons(!showIcons);
-        }}>
-        <Video
-          paused={puased}
-          source={{
-            uri: selectVideo,
-          }}
-          ref={ref}
-          onProgress={x => {
-            setProgress(x);
-            console.log(
-              formatTime(x.currentTime),
-              'current seek iiiiiiiiiiiiii',
-            );
-          }}
-          // Can be a URL or a local file.
-          //  ref={(ref) => {
-          //    this.player = ref
-          //  }}                                      // Store reference
-          //  onBuffer={this.onBuffer}                // Callback when remote video is buffering
-          //  onError={this.videoError}
+        style={{
+          width: '100%',
+          height: fullScreen ? '100%' : 200,
+          backgroundColor: 'black',
+        }}
+        onPress={() => videoControl()}>
+        <View style={{flex: 1}}>
+          <Video
+            paused={puased}
+            source={{
+              uri: selectVideo,
+            }}
+            pointerEvents="none"
+            ref={ref}
+            onProgress={x => {
+              setProgress(x);
+            }}
+            onLoad={() => setLoading(false)}
+            onBuffer={() => setLoading(true)}
+            onError={() => setLoading(true)}
+            style={{width: '100%', height: fullScreen ? '100%' : 200}}
+            resizeMode="cover"
+          />
+          {loading && (
+            <View
+              style={{
+                ...StyleSheet.absoluteFill,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          )}
+        </View>
+        {/* )} */}
 
-          // Callback when video cannot be loaded
-          // muted
-          style={{width: '100%', height: fullScreen ? '100%' : 200}}
-          resizeMode="contain"
-        />
         {clicked && (
           <TouchableOpacity
             style={{
@@ -366,49 +416,57 @@ const VideoPlay = ({route, navigation}) => {
               backgroundColor: 'rgba(0,0,0,.5)',
               justifyContent: 'center',
               alignItems: 'center',
-            }}>
+            }}
+            onPress={() => videoControl()}>
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity
                 onPress={() => {
                   ref.current.seek(parseInt(progress?.currentTime) - 10);
                 }}>
-                <Image
-                  source={require('../../../assets/images/backward.png')}
-                  style={{width: 30, height: 30, tintColor: 'white'}}
-                />
+                {format(progress?.currentTime) !== 'NaN:NaN' && (
+                  <Image
+                    source={require('../../../assets/images/backward.png')}
+                    style={{width: 30, height: 30, tintColor: 'white'}}
+                  />
+                )}
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
                   setPaused(!puased);
                   callingApiForCount();
+                  videoControl(); // Call videoControl here
                 }}>
-                <Image
-                  source={
-                    puased
-                      ? require('../../../assets/images/play-button.png')
-                      : require('../../../assets/images/pause.png')
-                  }
-                  style={{
-                    width: 30,
-                    height: 30,
-                    tintColor: 'white',
-                    marginLeft: 50,
-                  }}
-                />
+                {format(progress?.currentTime) !== 'NaN:NaN' && (
+                  <Image
+                    source={
+                      puased
+                        ? require('../../../assets/images/play-button.png')
+                        : require('../../../assets/images/pause.png')
+                    }
+                    style={{
+                      width: 30,
+                      height: 30,
+                      tintColor: 'white',
+                      marginLeft: 50,
+                    }}
+                  />
+                )}
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
                   ref.current.seek(parseInt(progress?.currentTime) + 10);
                 }}>
-                <Image
-                  source={require('../../../assets/images/forward.png')}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    tintColor: 'white',
-                    marginLeft: 50,
-                  }}
-                />
+                {format(progress?.currentTime) !== 'NaN:NaN' && (
+                  <Image
+                    source={require('../../../assets/images/forward.png')}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      tintColor: 'white',
+                      marginLeft: 50,
+                    }}
+                  />
+                )}
               </TouchableOpacity>
             </View>
             <View
@@ -423,20 +481,28 @@ const VideoPlay = ({route, navigation}) => {
                 alignItems: 'center',
               }}>
               <Text style={{color: 'white'}}>
-                {format(progress?.currentTime)}
+                {format(progress?.currentTime) === 'NaN:NaN'
+                  ? ''
+                  : format(progress?.currentTime)}
               </Text>
-              <Slider
-                style={{width: '80%', height: 40}}
-                minimumValue={0}
-                maximumValue={progress?.seekableDuration}
-                minimumTrackTintColor="#FFFFFF"
-                maximumTrackTintColor="#fff"
-                onValueChange={x => {
-                  ref.current.seek(x);
-                }}
-              />
+
+              {format(progress?.currentTime) !== 'NaN:NaN' && (
+                <Slider
+                  style={{width: '80%', height: 40}}
+                  minimumValue={0}
+                  maximumValue={progress?.seekableDuration}
+                  minimumTrackTintColor="#FFFFFF"
+                  maximumTrackTintColor="#fff"
+                  onValueChange={x => {
+                    ref.current.seek(x);
+                  }}
+                />
+              )}
+
               <Text style={{color: 'white'}}>
-                {format(progress?.seekableDuration)}
+                {format(progress?.seekableDuration) === 'NaN:NaN'
+                  ? ''
+                  : format(progress?.seekableDuration)}
               </Text>
             </View>
             <View

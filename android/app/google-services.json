@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "57432360300",
+    "project_id": "mytvs-f2fd1",
+    "storage_bucket": "mytvs-f2fd1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57432360300:android:3e77579d5cc921f3181f49",
+        "android_client_info": {
+          "package_name": "com.portal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTNewXx8vpl5o9KGrPARki8fGJCrBpTzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

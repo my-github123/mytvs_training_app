@@ -4,12 +4,13 @@ import {StyleSheet, View} from 'react-native';
 import Logo from './assets/images/logo.svg';
 import ScreenList from './src/navigation/ScreenList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import messaging from '@react-native-firebase/messaging';
 // const data = [
-//   {username: 'vignesh', password: 'admin'},
-//   {username: 'aashiq', password: 'admin'},
+//   {username: 'OWCH42156', password: 'user123'},
+//   {username: 'OWCH47305', password: 'user123'},
 // ];
 
+//OWCH42156
 const SplashScreen = () => {
   return (
     <View style={styles.container}>
@@ -18,7 +19,7 @@ const SplashScreen = () => {
   );
 };
 
-export default function App() {
+export default function App({navigation}) {
   const [loading, setLoading] = useState(true);
 
   // useEffect(() => {
@@ -56,3 +57,5 @@ const styles = StyleSheet.create({
   },
 });
 // //  android:screenOrientation="portrait"
+
+//2526

@@ -16,6 +16,7 @@ import Logo from '../../../assets/images/logo.svg';
 import Password from '../../../assets/images/password.svg';
 import {apiPostWithoutToken} from '../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 
 // Call the function to store the data
 
@@ -58,6 +59,27 @@ export default function Login({navigation}) {
   //   // Handle button press logic here
 
   // };
+
+  useEffect(() => {
+    requestUserPermission();
+    getToken();
+  }, []);
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  const getToken = async () => {
+    const token = await messaging().getToken();
+    console.log(token, 'token is there......');
+  };
 
   const handlePress = async () => {
     if (!username.trim() || !password.trim()) {
@@ -123,19 +145,25 @@ export default function Login({navigation}) {
     console.log('handle ');
     try {
       const params = {
-        username: username,
-        password: password,
+        username: username.trim(),
+        password: password.trim(),
       };
+
+      console.log(params, 'params is there');
+
       const data = await apiPostWithoutToken('login', params);
 
+      console.log(data, 'DATA IS THERE..............');
+
       await AsyncStorage.setItem('token', data.token);
-      await AsyncStorage.setItem('userID', JSON.stringify(data.user.userId));
+      await AsyncStorage.setItem('userID', String(data.user.userId));
 
       await AsyncStorage.setItem('username', data.user.username);
+      await AsyncStorage.setItem('password', data.user.password);
 
       const userString = JSON.stringify(data.user);
 
-      //Store user string in AsyncStorage
+      // Store user string in AsyncStorage
       AsyncStorage.setItem('userList', userString)
         .then(() => console.log('User stored successfully'))
         .catch(error => console.error('Failed to store user:', error));
@@ -143,8 +171,13 @@ export default function Login({navigation}) {
       console.log('POST response:', data);
       setUsername('');
       setPassword('');
-      ToastAndroid.show('Login Successfully', ToastAndroid.SHORT);
-      navigation.navigate('VideoList');
+      if (data.user.role == 'Viewer') {
+        ToastAndroid.show('Login Successfully', ToastAndroid.SHORT);
+        navigation.navigate('VideoList');
+      } else {
+        await AsyncStorage.removeItem('token');
+        ToastAndroid.show('Invalid Credentials', ToastAndroid.SHORT);
+      }
     } catch (error) {
       ToastAndroid.show('User Not Found', ToastAndroid.SHORT);
       console.error('POST error:', error);

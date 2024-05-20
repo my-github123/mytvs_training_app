@@ -70,13 +70,16 @@ export default function Account({navigation}) {
   }, [navigation]);
 
   const handlePress = async () => {
-    AsyncStorage.removeItem('token')
-      .then(
-        () => console.log('Token removed successfully'),
-        navigation.navigate('Login'),
-      )
-      .catch(error => console.error('Failed to remove token:', error));
-    navigation.navigate('Login');
+    try {
+      await AsyncStorage.removeItem('token');
+      console.log('Token removed successfully');
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      });
+    } catch (error) {
+      console.error('Failed to remove token:', error);
+    }
   };
   return (
     <View style={styles.container}>
@@ -107,6 +110,11 @@ export default function Account({navigation}) {
               height={63}
               //  style={{marginTop: 10}}
             />
+            <Text
+              onPress={() => navigation.navigate('ResetPassword')}
+              style={{marginTop: 6}}>
+              Reset Password
+            </Text>
           </View>
           <View style={styles.loginContainer}>
             <Text style={styles.wrapperText}>Username</Text>
